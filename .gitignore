@@ -28,3 +28,7 @@ experiments/_wip/
 
 # OS
 .DS_Store
+
+# demoforge build-state / lock (local only)
+.demoforge-progress.json
+.demoforge.lock
