@@ -48,7 +48,7 @@ class RetimeConfig:
     """Configuration for :func:`demoforge.retime_episode`."""
 
     mode: str = "keep_count"  # "keep_count" (exact positions, retime only) | "resample"
-    backend: str = "topp"
+    backend: str = "auto"  # "auto" (toppra else numpy) | "topp" | "numpy"
     speeds: tuple[float, ...] = (1.0,)
     preserve_contact: str | None = "gripper"  # joint name substring, or None to disable
     target_fps: float | None = None  # resample mode only; default: input fps
@@ -59,8 +59,8 @@ class RetimeConfig:
     def __post_init__(self) -> None:
         if self.mode not in ("keep_count", "resample"):
             raise ValueError(f"mode must be 'keep_count' or 'resample', got {self.mode!r}")
-        if self.backend not in ("topp", "numpy"):
-            raise ValueError(f"backend must be 'topp' or 'numpy', got {self.backend!r}")
+        if self.backend not in ("auto", "topp", "numpy"):
+            raise ValueError(f"backend must be 'auto', 'topp' or 'numpy', got {self.backend!r}")
         if not self.speeds or any(s <= 0 for s in self.speeds):
             raise ValueError("speeds must be a non-empty tuple of positive floats")
 

@@ -35,11 +35,16 @@ feasible, jerk-bounded trajectories — offline, reproducibly, on a laptop.
 
 ## Install
 
+Requires Python **3.11+** (the TOPP-RA backend, `toppra`, has no working wheel on 3.10).
+
 ```bash
 pip install demoforge                 # CPU-only core (numpy/scipy/toppra)
 pip install "demoforge[lerobot]"      # + real LeRobotDataset v3 read/emit (pulls torch)
 pip install "demoforge[urdf]"         # + URDF joint-limit parsing
 ```
+
+The default re-timing backend is `auto`: it uses TOPP-RA when `toppra` imports and falls back
+to a pure-numpy (feasible, not time-optimal) backend otherwise.
 
 ## Quickstart
 

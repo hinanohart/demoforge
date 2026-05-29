@@ -99,17 +99,29 @@ def parameterize(
     path: PathSpline,
     limits: RobotLimits,
     *,
-    backend: str = "topp",
+    backend: str = "auto",
     n_grid: int = 200,
 ) -> TimeLaw:
-    """Compute a feasible time-optimal-ish ``s(t)`` for ``path`` under ``limits``."""
+    """Compute a feasible time-optimal-ish ``s(t)`` for ``path`` under ``limits``.
+
+    ``backend``:
+      * ``"auto"`` (default) — TOPP-RA if ``toppra`` imports, else the pure-numpy backend.
+        Degrades gracefully where toppra has no working wheel for the interpreter.
+      * ``"topp"`` — require TOPP-RA (raises ImportError if unavailable).
+      * ``"numpy"`` — pure-numpy, dependency-light (feasible, not time-optimal).
+    """
     if limits.n != path.n_joints:
         raise ValueError(f"limits has {limits.n} joints but path has {path.n_joints}")
+    if backend == "auto":
+        try:
+            return _parameterize_topp(path, limits, n_grid)
+        except ImportError:
+            return _parameterize_numpy(path, limits, n_grid)
     if backend == "topp":
         return _parameterize_topp(path, limits, n_grid)
     if backend == "numpy":
         return _parameterize_numpy(path, limits, n_grid)
-    raise ValueError(f"unknown backend {backend!r}; use 'topp' or 'numpy'")
+    raise ValueError(f"unknown backend {backend!r}; use 'auto', 'topp' or 'numpy'")
 
 
 def _parameterize_topp(path: PathSpline, limits: RobotLimits, n_grid: int) -> TimeLaw:

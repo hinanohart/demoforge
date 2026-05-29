@@ -85,7 +85,7 @@ def process(
     robot: str = typer.Option(None, "--robot", "-r"),
     limits_file: str = typer.Option(None, "--limits", help="custom limits YAML"),
     mode: str = typer.Option("keep_count", "--mode", help="keep_count | resample"),
-    backend: str = typer.Option("topp", "--retime", help="topp | numpy"),
+    backend: str = typer.Option("auto", "--retime", help="auto | topp | numpy"),
     speeds: str = typer.Option("1.0", "--speeds", help="comma list, e.g. 0.8,1.0,1.2"),
     preserve_contact: str = typer.Option("gripper", "--preserve-contact"),
     target_fps: float = typer.Option(None, "--fps", help="resample mode target fps"),

@@ -88,6 +88,16 @@ def test_faster_than_optimal_is_clamped_not_infeasible():
     assert check_feasible(out.timestamps, out.actions, LIM, tol=0.05).dynamic_feasible
 
 
+def test_numpy_backend_is_feasible_and_deterministic():
+    # the dependency-light fallback must also produce a dynamically-feasible, deterministic result
+    raw = _episode(3, 80, 0.5, 0.06)
+    r1, _ = retime_episode(raw, LIM, RetimeConfig(backend="numpy", speeds=(1.0,)))
+    r2, _ = retime_episode(raw, LIM, RetimeConfig(backend="numpy", speeds=(1.0,)))
+    assert check_feasible(r1[0].timestamps, r1[0].actions, LIM, tol=0.05).dynamic_feasible
+    assert np.array_equal(r1[0].actions, r2[0].actions)
+    assert np.array_equal(r1[0].timestamps, r2[0].timestamps)
+
+
 def test_too_short_episode_passes_through():
     raw = RawEpisode(
         actions=np.zeros((2, LIM.n)),
