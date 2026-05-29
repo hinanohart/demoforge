@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "demoforge"
+version = "0.1.0a1"
+description = "black . for robot demonstrations — deterministic CPU-only re-timing of LeRobot teleop demos under joint limits."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "hinanohart" }]
+keywords = ["robotics", "lerobot", "trajectory", "time-parameterization", "toppra", "vla", "teleoperation"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "toppra>=0.6,<0.7",
+  "pyarrow>=14",
+  "pyyaml>=6",
+  "jsonschema>=4",
+  "typer>=0.12",
+]
+
+[project.optional-dependencies]
+# Real LeRobotDataset v3 read/emit. Heavy (torch); not required for the CPU-only core engine.
+lerobot = ["lerobot>=0.1"]
+# URDF parsing for per-robot joint limits (bundled YAML presets work without this).
+urdf = ["yourdfpy>=0.0.55"]
+dev = ["pytest>=8", "hypothesis>=6", "ruff>=0.6", "mypy>=1.10"]
+
+[project.urls]
+Homepage = "https://github.com/hinanohart/demoforge"
+Repository = "https://github.com/hinanohart/demoforge"
+Issues = "https://github.com/hinanohart/demoforge/issues"
+
+[project.scripts]
+demoforge = "demoforge.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/demoforge"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+warn_redundant_casts = true
+ignore_missing_imports = true
+files = ["src/demoforge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

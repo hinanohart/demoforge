@@ -1,0 +1,6 @@
+{
+  "extraPaths": ["src"],
+  "reportMissingImports": "none",
+  "reportAttributeAccessIssue": "none",
+  "exclude": ["**/.venv*", "**/node_modules"]
+}

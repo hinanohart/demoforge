@@ -1,0 +1,20 @@
+# SO-ARM101 follower joint limits (conservative defaults).
+#
+# URDF files carry position and (sometimes) velocity limits, but NOT acceleration
+# or jerk. These presets follow the ros2_control joint_limits.yaml convention and
+# encode conservative, publicly-documentable kinematic bounds derived from the
+# Feetech STS3215 servo class. They are starting points to be tuned per deployment.
+#
+# demoforge's correctness claim is "the emitted trajectory respects WHATEVER limits
+# are configured here" — it does not claim these specific numbers match any physical
+# unit. Override with --limits <your.yaml> or RobotLimits.from_yaml(...).
+robot: so101
+description: "SO-ARM101 follower: 5-DOF arm + 1 gripper. Conservative defaults, tune per robot."
+units: {position: rad, velocity: rad/s, acceleration: rad/s^2, jerk: rad/s^3}
+joints:
+  - {name: shoulder_pan,  pos: [-1.920,  1.920], vel: 3.0, acc: 8.0,  jerk: 80.0,  continuous: false}
+  - {name: shoulder_lift, pos: [-1.745,  1.745], vel: 3.0, acc: 8.0,  jerk: 80.0,  continuous: false}
+  - {name: elbow_flex,    pos: [-1.690,  1.690], vel: 3.0, acc: 8.0,  jerk: 80.0,  continuous: false}
+  - {name: wrist_flex,    pos: [-1.660,  1.660], vel: 3.5, acc: 10.0, jerk: 100.0, continuous: false}
+  - {name: wrist_roll,    pos: [-3.142,  3.142], vel: 4.0, acc: 12.0, jerk: 120.0, continuous: true}
+  - {name: gripper,       pos: [-0.175,  1.745], vel: 4.0, acc: 12.0, jerk: 120.0, continuous: false}

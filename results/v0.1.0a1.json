@@ -1,0 +1,24 @@
+{
+  "version": "0.1.0a1",
+  "mode": "synthetic",
+  "date": "2026-05-29",
+  "robot": "so101",
+  "dataset_n": 8,
+  "backend": "topp",
+  "hw": "x86_64",
+  "os": "Linux",
+  "python": "3.12.3",
+  "seed": 0,
+  "disclaimer": "Metrics demonstrate geometric/kinematic feasibility of the emitted trajectory only. Mode=synthetic means data is reproducible mock teleop, not a real robot dataset; no claim is made about downstream training outcomes.",
+  "metrics": {
+    "limit_violations_before": 1428,
+    "limit_violations_after": 0,
+    "position_violations_before": 0,
+    "position_violations_after": 0,
+    "max_jerk_before": 2335.067,
+    "max_jerk_after": 52.936,
+    "path_deviation_max": 0.0,
+    "determinism_bit_exact": true,
+    "contact_segments_flagged": 186
+  }
+}

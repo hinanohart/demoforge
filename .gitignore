@@ -1,0 +1,30 @@
+# secrets / env
+.env
+.env.*
+*.token
+*token*
+.venv/
+.venv-*/
+venv/
+
+# build
+build/
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+
+# large data artifacts (never commit datasets / video)
+*.parquet
+*.mp4
+*.arrow
+data/cache/
+scratch/
+experiments/_wip/
+
+# OS
+.DS_Store

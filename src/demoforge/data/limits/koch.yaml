@@ -1,0 +1,14 @@
+# Koch v1.1 low-cost arm joint limits (conservative defaults).
+#
+# The Koch arm (Alexander Koch design, Dynamixel XL-330 class) is a 5-DOF arm + gripper.
+# See so101.yaml for the limits convention and disclaimer. Tune per robot.
+robot: koch
+description: "Koch v1.1 low-cost arm: 5-DOF arm + 1 gripper. Conservative defaults."
+units: {position: rad, velocity: rad/s, acceleration: rad/s^2, jerk: rad/s^3}
+joints:
+  - {name: shoulder_pan,  pos: [-2.094,  2.094], vel: 3.5, acc: 9.0,  jerk: 90.0,  continuous: false}
+  - {name: shoulder_lift, pos: [-1.745,  1.745], vel: 3.5, acc: 9.0,  jerk: 90.0,  continuous: false}
+  - {name: elbow_flex,    pos: [-1.745,  1.745], vel: 3.5, acc: 9.0,  jerk: 90.0,  continuous: false}
+  - {name: wrist_flex,    pos: [-1.745,  1.745], vel: 4.0, acc: 11.0, jerk: 110.0, continuous: false}
+  - {name: wrist_roll,    pos: [-3.142,  3.142], vel: 4.5, acc: 13.0, jerk: 130.0, continuous: true}
+  - {name: gripper,       pos: [-0.262,  1.571], vel: 4.5, acc: 13.0, jerk: 130.0, continuous: false}

@@ -1,0 +1,50 @@
+{
+  "project": "demoforge",
+  "version_tag": "v0.1.0a1",
+  "current_step": "S8",
+  "completed_steps": ["S0", "S0.5", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S9"],
+  "checklist": {
+    "S0": true, "S0.5": true, "S1": true, "S2": true, "S3": true,
+    "S4": true, "S5": true, "S6": true, "S7": true, "S8": false,
+    "S9": true, "S10": false, "S11": false, "S12": false
+  },
+  "lock": {"held_by_session": "fe2a5a57-build", "pid": null, "acquired_at_arg": "2026-05-29T03:15:44Z"},
+  "decisions": {
+    "public_name": "demoforge",
+    "name_fallbacks": ["retimeforge", "demolathe", "retempo", "trajforge"],
+    "license": "Apache-2.0",
+    "standalone_verdict": "standalone+engine-subapi",
+    "engine_export": ["JointLimits", "RobotLimits", "parameterize_toppra", "min_jerk_resample", "bound_jerk", "check_feasible", "extract_path"],
+    "core_libs": ["numpy", "scipy", "toppra(MIT)", "yourdfpy(MIT)", "pyarrow", "jsonschema", "pyyaml"],
+    "io_dep": "pyarrow core (torch-free) + [lerobot] extra for real emit; synthetic mock for CI",
+    "math": {"retime": "TOPP-RA (seidel, deterministic)", "jerk": "post-hoc local time-dilation + self min-jerk", "smooth": "v0.2", "canonicalize": "v0.2"},
+    "contact": "PRESERVE-AND-FLAG default",
+    "python": ">=3.10 (toppra 0.6.3 verified on 3.12)",
+    "ci_matrix": ["3.10", "3.11", "3.12"]
+  },
+  "kill_criteria_results": {
+    "parallel_session": {"checked": true, "verdict": "clear", "evidence_url": "gh repo view hinanohart/demoforge=404; O_EXCL lock acquired"},
+    "org_dup": {"checked": true, "verdict": "clear", "evidence_url": "gh repo list hinanohart=128 repos, no demoforge/retime/toppra collision; day-grep all self-concept memory"},
+    "OQ1_name": {"checked": true, "verdict": "clear", "evidence_url": "pypi.org/simple/demoforge/=404; org namespace 404"},
+    "OQ2_upstream2326": {"checked": true, "verdict": "clear", "evidence_url": "gh search code huggingface/lerobot toppra/'time parameterization'=0 hits"},
+    "OQ3_scoop": {"checked": true, "verdict": "clear", "evidence_url": "DemoSpeedup/SAIL/LiPo inference-side per architecture memory; no offline-emit competitor"},
+    "OQ4_data": {"checked": true, "verdict": "core-torch-free-ok; real-data deferred to S3/S6", "evidence_url": "toppra/numpy/scipy torch-free verified; lerobot-dataset torch-free install tested at S3"},
+    "OQ5_incumbent": {"checked": true, "verdict": "clear", "evidence_url": "RoboticsData/score_lerobot_episodes = 'quantitatively scoring' = score-only, cite-not-reinvent"},
+    "toppra_wheel_risk": {"checked": true, "verdict": "RETIRED", "evidence_url": "toppra 0.6.3 installed+functional on py3.12 (seidel solver, 2-DOF parameterize OK)"}
+  },
+  "measured": {
+    "limit_violations_before": 1428, "limit_violations_after": 0,
+    "max_jerk_before": 2335.067, "max_jerk_after": 52.936,
+    "path_deviation_max": 0.0, "determinism_bit_exact": true,
+    "contact_flagged": 186, "dataset": {"n": 8, "mode": "synthetic", "robot": "so101"},
+    "reproduced_in_clean_clone": null,
+    "tests": "42 passed, ruff clean, mypy clean", "position_violations": "0->0"
+  },
+  "critic": {"verdict": null, "rounds": 0, "blockers_open": []},
+  "publish": {"repo_created": false, "branch_protected": false, "tagged": false, "released": false, "pypi": "deferred"},
+  "circuit_breaker": {"max_attempts_per_step": 5, "critic_max_rounds": 3, "max_total_hours": 168},
+  "pivot_history": [
+    {"event": "cross-session-pointer-contention", "at": "2026-05-29T03:15:44Z+build", "note": "parallel session ea449d73 flipped project_oss_active_target.md ACTIVE_BUILD_TARGET -> lerobot-curate mid-build. demoforge build already underway under own O_EXCL lock + own repo (hinanohart/demoforge) + own work_dir (~/demoforge). Distinct repo/dir/lock = zero artifact collision. This session's user-confirmed target (per /compact summary + 'continue previous results') is demoforge; trigger-time pointer no longer controls an in-flight locked build. Did NOT revert their lerobot-curate pointer (R8 + harness intentional-edit note). Continuing demoforge."}
+  ],
+  "human_pause": {"paused": false, "reason": null}
+}

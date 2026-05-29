@@ -1,0 +1,15 @@
+# LeKiwi joint limits (conservative defaults).
+#
+# LeKiwi mounts an SO-ARM101-class arm on a holonomic mobile base. v0.1.0a1 re-times
+# the arm joints only; base wheel velocities are passed through unchanged (flagged in
+# the health sidecar). See so101.yaml for the limits convention and disclaimer.
+robot: lekiwi
+description: "LeKiwi: SO-ARM101-class arm (re-timed) + mobile base (pass-through in a1)."
+units: {position: rad, velocity: rad/s, acceleration: rad/s^2, jerk: rad/s^3}
+joints:
+  - {name: arm_shoulder_pan,  pos: [-1.920,  1.920], vel: 3.0, acc: 8.0,  jerk: 80.0,  continuous: false}
+  - {name: arm_shoulder_lift, pos: [-1.745,  1.745], vel: 3.0, acc: 8.0,  jerk: 80.0,  continuous: false}
+  - {name: arm_elbow_flex,    pos: [-1.690,  1.690], vel: 3.0, acc: 8.0,  jerk: 80.0,  continuous: false}
+  - {name: arm_wrist_flex,    pos: [-1.660,  1.660], vel: 3.5, acc: 10.0, jerk: 100.0, continuous: false}
+  - {name: arm_wrist_roll,    pos: [-3.142,  3.142], vel: 4.0, acc: 12.0, jerk: 120.0, continuous: true}
+  - {name: arm_gripper,       pos: [-0.175,  1.745], vel: 4.0, acc: 12.0, jerk: 120.0, continuous: false}

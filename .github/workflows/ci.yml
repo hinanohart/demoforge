@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test (py${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install (editable + dev)
+        shell: bash -euo pipefail {0}
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Lint (ruff)
+        shell: bash -euo pipefail {0}
+        run: ruff check src tests
+      - name: Types (mypy)
+        shell: bash -euo pipefail {0}
+        run: mypy src/demoforge
+      - name: Tests (pytest)
+        shell: bash -euo pipefail {0}
+        run: python -m pytest -q
+      - name: Smoke (verify_step)
+        shell: bash -euo pipefail {0}
+        run: python scripts/verify_step.py
+      - name: Honest-marketing (README numbers in sync with results/)
+        shell: bash -euo pipefail {0}
+        run: python scripts/gen_readme_numbers.py --check
+
+  build:
+    name: build (wheel + sdist)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build
+        shell: bash -euo pipefail {0}
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/*
