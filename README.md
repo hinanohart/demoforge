@@ -4,8 +4,8 @@
 
 **demoforge** is a CPU-only, deterministic re-timer for [LeRobot](https://github.com/huggingface/lerobot) teleoperation
 datasets. It keeps the geometric **path** of each demonstration intact while re-deriving a new **time-law** that respects a
-robot's joint velocity / acceleration / jerk limits, then emits a fresh `LeRobotDataset` (optionally replicated at several
-speeds) plus a per-episode **demo-health** sidecar for triage.
+robot's joint velocity / acceleration / jerk limits, then emits a fresh v3-format dataset (the re-timed
+action/timestamp parquet layer, optionally replicated at several speeds) plus a per-episode **demo-health** sidecar for triage.
 
 It does *one* thing: turn raw, jerky, inconsistently-paced hand-teleop demos into kinematically clean, dynamically
 feasible, jerk-bounded trajectories — offline, reproducibly, on a laptop.
@@ -39,7 +39,7 @@ Requires Python **3.11+** (the TOPP-RA backend, `toppra`, has no working wheel o
 
 ```bash
 pip install demoforge                 # CPU-only core (numpy/scipy/toppra)
-pip install "demoforge[lerobot]"      # + real LeRobotDataset v3 read/emit (pulls torch)
+pip install "demoforge[lerobot]"      # optional torch + lerobot (not required for v0.1.0a1 I/O)
 pip install "demoforge[urdf]"         # + URDF joint-limit parsing
 ```
 
@@ -69,8 +69,9 @@ demoforge process path/to/dataset \
 4. Bound jerk **post-hoc** by local time-dilation — TOPP-RA has no native jerk constraint, so jerk is bounded by a
    second pass and the whole result is *verified by finite-differencing the emitted trajectory* (vel/acc/jerk all checked).
 5. Emit the re-timed dataset:
-   - **`keep_count`** (default) — keep the recorded positions and frame count exactly; only the per-frame timestamps
-     change. Path, video and observations are preserved bit-for-bit; contact pacing is never sped below the recording.
+   - **`keep_count`** (default) — keep the recorded positions, frame count and order exactly; only the per-frame
+     timestamps change, so the recorded path stays exact and the source video/observations remain valid 1:1 (the writer
+     emits the re-timed action/timestamp parquet layer). Contact pacing is never sped below the recording.
    - **`resample`** — sample the smoothed path at a uniform target fps (smooths recording noise; reports the resulting
      path deviation). Each re-timed variant becomes one episode; several speeds can be emitted at once.
 

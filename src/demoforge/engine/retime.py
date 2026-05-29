@@ -170,9 +170,7 @@ def _parameterize_numpy(path: PathSpline, limits: RobotLimits, n_grid: int) -> T
     sd_const = float(np.min(sd_cap))
     if not np.isfinite(sd_const) or sd_const <= 0:
         raise RuntimeError("numpy backend: degenerate path (zero feasible speed)")
-    # cruise time at constant speed
-    t_cruise = path.length / sd_const
-    # add symmetric ramp time so we start/stop at rest within accel limits
+    # symmetric ramp time so we start/stop at rest within accel limits
     a_min = float(np.min(limits.acc))
     t_ramp = sd_const / a_min  # time to reach cruise speed
     # build a smooth (min-jerk) speed profile sd(s): ramp up, cruise, ramp down
@@ -190,7 +188,6 @@ def _parameterize_numpy(path: PathSpline, limits: RobotLimits, n_grid: int) -> T
     sd_avg = 0.5 * (sd_prof[:-1] + sd_prof[1:])
     dt = ds / sd_avg
     t_knots = np.concatenate([[0.0], np.cumsum(dt)])
-    _ = t_cruise  # informative only
     return TimeLaw(t_knots, s_grid, backend="numpy")
 
 

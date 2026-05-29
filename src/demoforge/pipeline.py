@@ -6,11 +6,11 @@ datasets to/from this representation.
 
 Two output modes (``RetimeConfig.mode``):
 
-* ``"keep_count"`` (default) — keep the recorded positions and frame count *exactly* and
-  re-derive only the per-frame timestamps. The geometric path, video and observations are
-  preserved bit-for-bit; only timing changes. Contact pacing is preserved automatically
-  because re-timing here can only slow segments down to meet limits, never speed past the
-  recording.
+* ``"keep_count"`` (default) — keep the recorded positions, frame count and order *exactly* and
+  re-derive only the per-frame timestamps. Because frames map 1:1, the recorded path stays exact
+  and the source video/observations remain valid unchanged (the writer emits the re-timed
+  action/timestamp frame layer). Contact pacing is preserved automatically because re-timing
+  here can only slow segments down to meet limits, never speed past the recording.
 * ``"resample"`` — fit a smooth interpolating spline through the waypoints and resample at a
   uniform target fps. Smooths recording noise (so it can run faster) at the cost of a small,
   measured path deviation; observations would need source-frame remapping (recorded indices).
@@ -176,6 +176,7 @@ def retime_episode(
             path_dev=0.0,
             segments=[],
             outcome="infeasible_passthrough",
+            results=results,
         )
         return results, health
 
@@ -205,6 +206,7 @@ def retime_episode(
         path_dev,
         seg_info,
         outcome="retimed",
+        results=results,
     )
     return results, health
 
@@ -296,12 +298,16 @@ def _health(
     path_dev,
     segments,
     outcome,
+    results,
 ) -> DemoHealth:
     def _dyn(rep):
         return 0 if rep is None else rep.n_dynamic_violations
 
     def _pos(rep):
         return 0 if rep is None else rep.n_pos_violations
+
+    in_unpadded = np.asarray(raw.unpadded()[0], dtype=float)
+    had_nan_in = bool(in_unpadded.size and not np.isfinite(in_unpadded).all())
 
     flags: list[str] = []
     if before is not None and before.n_dynamic_violations > 0:
@@ -318,6 +324,8 @@ def _health(
         flags.append("contact_locked")
     if any(f > 1.0 for f in cfg.speeds):
         flags.append("speed_may_clamp")
+    if had_nan_in:
+        flags.append("nan_in_input")
 
     suggestion = "keep"
     if outcome == "infeasible_passthrough":
@@ -326,14 +334,25 @@ def _health(
         suggestion = "review:positions_out_of_box"
     elif before is not None and before.n_dynamic_violations > 0:
         suggestion = "keep:retime_fixed_violations"
+    if had_nan_in:
+        suggestion = "review:nan_in_input"
 
+    # data-integrity is measured on the emitted variants, never assumed: no_nan_out is the
+    # actual finiteness of every emitted action/timestamp; frame_count_preserved is True only
+    # when every emitted variant kept the input (unpadded) frame count (keep_count guarantee;
+    # resample changes the count by design, so it reports False there).
+    frames_in_unpadded = int(raw.unpadded()[0].shape[0])
+    out_finite = all(
+        bool(np.isfinite(r.actions).all()) and bool(np.isfinite(r.timestamps).all())
+        for r in results
+    )
     integrity = {
         "n_joints_in": int(raw.actions.shape[1]),
-        "frames_in_unpadded": int(raw.unpadded()[0].shape[0]),
+        "frames_in_unpadded": frames_in_unpadded,
         "frames_out": int(n_out),
         "mode": cfg.mode,
-        "no_nan_out": True,
-        "reconciled": True,
+        "no_nan_out": bool(out_finite),
+        "frame_count_preserved": bool(all(r.n_frames == frames_in_unpadded for r in results)),
     }
 
     return DemoHealth(

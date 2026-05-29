@@ -1,9 +1,9 @@
 """I/O adapters between LeRobot datasets and demoforge's :class:`~demoforge.ir.RawEpisode`.
 
 The default read/write path is **torch-free** (pyarrow over the v3 frame parquet), so the whole
-re-timing pipeline runs on a laptop without installing LeRobot/torch. A canonical, hub-ready
-emit via the real ``LeRobotDataset`` (which calls ``finalize()``) is available behind the
-optional ``[lerobot]`` extra.
+re-timing pipeline runs on a laptop without installing LeRobot/torch. v0.1.0a1 emits the
+re-timed action/timestamp frame layer; a canonical, hub-ready emit via the real
+``LeRobotDataset`` (media copy + ``finalize()``) is planned for a later release.
 """
 
 from __future__ import annotations

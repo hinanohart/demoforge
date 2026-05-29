@@ -135,12 +135,14 @@ def doctor() -> None:
 
     typer.echo(f"  toppra  (topp backend) : {_probe('toppra')}")
     typer.echo(f"  pyarrow (dataset I/O)  : {_probe('pyarrow')}")
-    typer.echo(f"  lerobot (canonical emit): {_probe('lerobot')}")
+    typer.echo(f"  lerobot (optional)     : {_probe('lerobot')}")
     typer.echo(f"  yourdfpy (URDF limits) : {_probe('yourdfpy')}")
     if _probe("toppra") == "MISSING":
         typer.echo("  -> install toppra, or use --retime numpy")
     if _probe("lerobot") == "MISSING":
-        typer.echo("  -> torch-free parquet I/O is used; install demoforge[lerobot] for finalize()")
+        typer.echo(
+            "  -> dataset I/O is torch-free; [lerobot] is optional and not required for v0.1.0a1"
+        )
 
 
 def main() -> None:  # pragma: no cover - console entrypoint shim

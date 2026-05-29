@@ -2,10 +2,11 @@
 
 A v3 dataset stores frames as parquet (columns ``action``, ``observation.*``, ``timestamp``,
 ``frame_index``, ``episode_index``, ``index``, ``task_index`` ...) plus ``meta/info.json``.
-demoforge reads the action stream and timestamps from the parquet (no torch needed) and writes
-a re-timed dataset by preserving every non-action column and rewriting ``timestamp`` (and the
-``action`` values in resample mode). For a canonical, hub-ready dataset that calls LeRobot's
-``finalize()``, use :func:`demoforge.io.emit_canonical` from the ``[lerobot]`` extra.
+demoforge reads the action stream and timestamps from the parquet (no torch needed). The writer
+emits the re-timed action/timestamp frame layer (``timestamp``, ``frame_index``,
+``episode_index``, ``index``, ``task_index``, ``action``) plus ``meta/info.json``; it does not
+copy source videos/observations or call LeRobot's ``finalize()`` — a canonical, hub-ready emit
+is planned for a later release.
 """
 
 from __future__ import annotations
@@ -76,7 +77,9 @@ def read_episode(
         raise KeyError(f"action column {action_key!r} not found; columns: {cols}")
 
     if episode_index is not None and "episode_index" in cols:
-        mask = pc.equal(table.column("episode_index"), episode_index)  # type: ignore[attr-defined]
+        # pyarrow.compute is populated dynamically: older builds ship no stub for `equal`
+        # (needs attr-defined), newer builds do (then the ignore is unused). Tolerate both.
+        mask = pc.equal(table.column("episode_index"), episode_index)  # type: ignore[attr-defined, unused-ignore]
         table = table.filter(mask)
         if table.num_rows == 0:
             raise ValueError(f"episode {episode_index} not present")
@@ -131,10 +134,10 @@ def write_retimed_dataset(
 ) -> Path:
     """Write re-timed variants as v3-compatible frame parquet + ``meta/info.json`` (torch-free).
 
-    Each :class:`RetimeResult` becomes one episode (its ``speed`` recorded in the source label
-    and as ``observation.demoforge_source``). This emits the action/timestamp layer of a v3
-    dataset; videos/observations from a source dataset are not copied here (use
-    :func:`demoforge.io.emit_canonical` with the ``[lerobot]`` extra for a hub-ready dataset).
+    Each :class:`RetimeResult` becomes one episode; its ``speed``/source is recorded in a
+    ``demoforge_source`` column. This emits the action/timestamp frame layer only — source
+    videos/observations are not copied and LeRobot's ``finalize()`` is not called (a canonical,
+    hub-ready emit is planned for a later release).
     """
     out_root = Path(out_root)
     (out_root / "data").mkdir(parents=True, exist_ok=True)
