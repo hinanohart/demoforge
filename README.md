@@ -20,10 +20,11 @@ flowchart TD
     D --> E[parameterize\nTOPP-RA or numpy fallback]
     E --> F{mode}
     F -->|keep_count| G[re-stamp existing frames\ncontact frames preserved]
-    F -->|resample| H[sample smooth path\nat target fps]
-    G --> I[enforce_feasibility_discrete\njerk post-hoc bound]
-    H --> I
+    F -->|resample| H[enforce_feasibility\njerk post-hoc bound on TimeLaw]
+    G --> I[enforce_feasibility_discrete\njerk post-hoc bound on fixed positions]
+    H --> N[sample smooth path\nat target fps]
     I --> J[check_feasible\nverify vel acc jerk]
+    N --> J
     J --> K[RetimeResult per speed]
     K --> L[io layer\nwrite_retimed_dataset]
     K --> M[DemoHealth sidecar\nJSONL triage report]
