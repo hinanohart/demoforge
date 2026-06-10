@@ -14,20 +14,20 @@ feasible, jerk-bounded trajectories — offline, reproducibly, on a laptop.
 
 ```mermaid
 flowchart TD
-    A[LeRobot v3 Dataset] --> B[io layer\nread_episode]
+    A[LeRobot v3 Dataset] --> B[io layer<br>read_episode]
     B --> C[RawEpisode IR]
-    C --> D[extract_path\narc-length spline]
-    D --> E[parameterize\nTOPP-RA or numpy fallback]
+    C --> D[extract_path<br>arc-length spline]
+    D --> E[parameterize<br>TOPP-RA or numpy fallback]
     E --> F{mode}
-    F -->|keep_count| G[re-stamp existing frames\ncontact frames preserved]
-    F -->|resample| H[enforce_feasibility\njerk post-hoc bound on TimeLaw]
-    G --> I[enforce_feasibility_discrete\njerk post-hoc bound on fixed positions]
-    H --> N[sample smooth path\nat target fps]
-    I --> J[check_feasible\nverify vel acc jerk]
+    F -->|keep_count| G[re-stamp existing frames<br>contact frames preserved]
+    F -->|resample| H[enforce_feasibility<br>jerk post-hoc bound on TimeLaw]
+    G --> I[enforce_feasibility_discrete<br>jerk post-hoc bound on fixed positions]
+    H --> N[sample smooth path<br>at target fps]
+    I --> J[check_feasible<br>verify vel acc jerk]
     N --> J
     J --> K[RetimeResult per speed]
-    K --> L[io layer\nwrite_retimed_dataset]
-    K --> M[DemoHealth sidecar\nJSONL triage report]
+    K --> L[io layer<br>write_retimed_dataset]
+    K --> M[DemoHealth sidecar<br>JSONL triage report]
 ```
 
 ## What it claims (and what it does not)
