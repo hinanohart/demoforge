@@ -1,0 +1,52 @@
+direction: down
+explanation: |md
+  ### demoforge
+  **`black .` for robot demonstrations** — re-times LeRobot teleoperation datasets to respect joint velocity / acceleration / jerk limits while preserving the geometric path.
+| {near: top-center}
+
+dataset: "① LeRobot v3 Dataset" {shape: oval; style: {fill: "#6366f1"; font-color: "#fff"; stroke: "#4338ca"; bold: true; font-size: 18}}
+io_read: "② io layer\nread_episode" {style: {fill: "#0ea5e9"; font-color: "#fff"; stroke: "#0369a1"; bold: true; font-size: 18}}
+ir: "③ RawEpisode IR" {style: {fill: "#dcfce7"; font-color: "#065f46"; bold: true}}
+
+path_pipeline: "Path Parameterization" {
+  style: {fill: "#f0fdf4"; stroke: "#10b981"; font-color: "#065f46"; bold: true; font-size: 16}
+  extract: "④ extract_path\narc-length spline"
+  param: "⑤ parameterize\nTOPP-RA or numpy fallback"
+  extract -> param: "⑤ fit"
+  *.style.fill: "#dcfce7"; *.style.font-color: "#065f46"
+}
+
+retime_zone: "Re-timing Mode" {
+  style: {fill: "#fffbeb"; stroke: "#f59e0b"; font-color: "#92400e"; bold: true; font-size: 16}
+  keep_count: "keep_count\nre-stamp existing frames"
+  resample: "resample\nenforce_feasibility\nTimeLaw"
+  *.style.fill: "#fef3c7"; *.style.font-color: "#92400e"
+}
+
+check: "⑥ check_feasible\nverify vel / acc / jerk" {style: {fill: "#0ea5e9"; font-color: "#fff"; stroke: "#0369a1"; bold: true; font-size: 18}}
+result: "⑦ RetimeResult\nper speed" {style: {fill: "#dcfce7"; font-color: "#065f46"; bold: true}}
+
+outputs: "Outputs" {
+  style: {fill: "#fdf2f8"; stroke: "#ec4899"; font-color: "#9d174e"; bold: true; font-size: 16}
+  write: "⑧ io layer\nwrite_retimed_dataset" {shape: cylinder}
+  health: "DemoHealth sidecar\nJSONL triage report" {shape: cylinder}
+  *.style.fill: "#fdf2f8"; *.style.font-color: "#9d174e"
+}
+
+dataset -> io_read: "① read"
+io_read -> ir: "② parse"
+ir -> path_pipeline.extract: "③ extract"
+path_pipeline.param -> retime_zone.keep_count: "⑤ mode"
+path_pipeline.param -> retime_zone.resample: "⑤ mode"
+retime_zone.keep_count -> check: "⑥ verify"
+retime_zone.resample -> check: "⑥ verify"
+check -> result: "⑦ collect"
+result -> outputs.write: "⑧ write"
+result -> outputs.health: "⑧ sidecar"
+
+legend: "Legend" {
+  near: bottom-center
+  style: {fill: "#f8fafc"; stroke: "#cbd5e1"; font-size: 13}
+  e: "● entry"; c: "● core"; p: "● processing"; b: "● external"; d: "● output"
+  e.style.font-color: "#4338ca"; c.style.font-color: "#0369a1"; p.style.font-color: "#10b981"; b.style.font-color: "#f59e0b"; d.style.font-color: "#ec4899"
+}

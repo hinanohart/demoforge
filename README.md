@@ -53,23 +53,9 @@ demoforge doctor
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    A[LeRobot v3 Dataset] --> B[io layer<br>read_episode]
-    B --> C[RawEpisode IR]
-    C --> D[extract_path<br>arc-length spline]
-    D --> E[parameterize<br>TOPP-RA or numpy fallback]
-    E --> F{mode}
-    F -->|keep_count| G[re-stamp existing frames<br>contact frames preserved]
-    F -->|resample| H[enforce_feasibility<br>vel/acc/jerk post-hoc bound on TimeLaw]
-    G --> I[enforce_feasibility_discrete<br>vel/acc/jerk post-hoc bound on fixed positions]
-    H --> N[sample smooth path<br>at target fps]
-    I --> J[check_feasible<br>verify vel acc jerk]
-    N --> J
-    J --> K[RetimeResult per speed]
-    K --> L[io layer<br>write_retimed_dataset]
-    K --> M[DemoHealth sidecar<br>JSONL triage report]
-```
+<div align="center">
+  <img src="docs/architecture.png" alt="demoforge architecture" width="840">
+</div>
 
 ## Output modes at a glance
 
@@ -124,3 +110,4 @@ Custom limits can be supplied via `--limits path/to/limits.yaml`.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
